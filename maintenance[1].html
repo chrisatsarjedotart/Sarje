@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html class="standalone-page">
+  <head>
+    <title>{{ page.name }} | {{ store.name }}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+    <link href="{{ theme | theme_css_url }}" media="screen" rel="stylesheet" type="text/css">
+    {{ head_content }}
+  </head>
+  <body class="maintenance-page">
+    <div class="maintenance-content">
+      <h1>{{ store.name }}</h1>
+      <p>We're working on our shop at the moment.</p>
+      {% if theme.twitter_url != blank or theme.facebook_url != blank or theme.instagram_url != blank or theme.tumblr_url != blank or theme.pinterest_url != blank %}
+        <div class="maintenance-footer">
+          <ul class="maintenance-social-links social-links">
+            {% if theme.instagram_url != blank %}
+              <li><a target="_blank" title="Instagram" href="{{ theme.instagram_url }}">Instagram</a></li>
+            {% endif %}
+            {% if theme.twitter_url != blank %}
+              <li><a target="_blank" title="Twitter" href="{{ theme.twitter_url }}">Twitter</a></li>
+            {% endif %}
+            {% if theme.facebook_url != blank %}
+              <li><a target="_blank" title="Facebook" href="{{ theme.facebook_url }}">Facebook</a></li>
+            {% endif %}
+            {% if theme.pinterest_url != blank %}
+              <li><a target="_blank" title="Pinterest" href="{{ theme.pinterest_url }}">Pinterest</a></li>
+            {% endif %}
+            {% if theme.tumblr_url != blank %}
+              <li><a target="_blank" title="Tumblr" href="{{ theme.tumblr_url }}">Tumblr</a></li>
+            {% endif %}
+          </ul>
+        </div>
+      {% endif %}
+    </div>
+  </body>
+</html>

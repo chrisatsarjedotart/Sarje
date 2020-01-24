@@ -1,0 +1,71 @@
+{% if theme.welcome_image or theme.welcome_text != blank %}
+  <div class="home-welcome">
+    {% if theme.welcome_image %}<img class="welcome-image" src="{{ theme.images.welcome_image.url | constrain: 2000,1400 }}" alt="Welcome to {{ store.name | escape }}">{% endif %}
+    {% if theme.welcome_text != blank %}
+      <div class="welcome-message{% if theme.welcome_image %} with-image{% endif %}">
+        {% if theme.welcome_text != blank %}<div class="welcome-message-text">{{ theme.welcome_text }}</div>{% endif %}
+      </div>
+    {% endif %}
+  </div>
+{% endif %}
+
+{% if theme.featured_items_type == 'Categories' %}
+  {% if categories.active != blank and theme.featured_items > 0 %}
+    <div class="featured-categories">
+      {% for category in categories.active limit:theme.featured_items %}
+        <div class="featured-category">
+          <div class="featured-category-info">
+            <div class="featured-category-title">Featured</div>
+            <div class="featured-category-name">{{ category.name }}</div>
+            <a class="featured-category-button button" href="{{ category.url }}">Shop Now</a>
+          </div>
+          <div class="featured-category-products">
+            {% for product in category.products limit:2 %}
+              <div class="featured-category-product {% if forloop.length == 1 %}single-featured-product{% endif %}">
+                <img alt="Image of {{ product.name | escape }}" class="featured-category-product-image" src="{{ product.image | product_image_url | constrain: 400 }}">
+              </div>
+            {% endfor %}
+          </div>
+          <a class="featured-category-button mobile-button button" href="{{ category.url }}">Shop Now</a>
+        </div>
+      {% endfor %}
+    </div>
+    <a class="button centered-button" href="/products" title="View All Products">View All</a>
+  {% endif %}
+
+{% else %}
+  {% if theme.featured_items > 0 %}
+    {% get products from products.all limit:theme.featured_items %}
+      {% if products != blank %}
+        <div class="product-list">
+          {% for product in products %}
+            {% assign product_status = '' %}
+            {% case product.status %}
+            	{% when 'active' %}
+            		{% if product.on_sale %}{% assign product_status = 'On sale' %}{% endif %}
+            	{% when 'sold-out' %}
+            		{% assign product_status = 'Sold out' %}
+            	{% when 'coming-soon' %}
+            		{% assign product_status = 'Coming soon' %}
+            {% endcase %}
+            <a class="product-list-item" href="{{ product.url }}" title="View {{ product.name | escape }}">
+              <div class="product-list-item-container">
+                <figure class="product-list-image-container {% if product.images[1] != blank and theme.secondary_image_on_hover == true %}show-secondary{% endif %}">
+                  <img alt="Image of {{ product.name | escape }}" class="product-list-image {% if product.image.height > product.image.width %}image-tall{% elsif product.image.height < product.image.width %}image-wide{% else %}image-square{% endif %}" src="{{ product.image | product_image_url | constrain: 1000, 1000 }}">
+                  {% if product.images[1] != blank and theme.secondary_image_on_hover == true %}
+                  <img alt="Image of {{ product.name | escape }}" class="product-list-image {% if product.image.height > product.image.width %}image-tall{% elsif product.image.height < product.image.width %}image-wide{% else %}image-square{% endif %} secondary-image" src="{{ product.images[1] | product_image_url | constrain: 1000, 1000 }}">
+                  {% endif %}
+                </figure>
+              </div>
+              <div class="product-list-item-name">{{ product.name }}</div>
+              <div class="product-list-item-price">{{ product.default_price | money: theme.money_format }}{% if product_status != blank %} &mdash; <span class="product-status">{{ product_status }}</span>{% endif %}</div>
+            </a>
+          {% endfor %}
+        </div>
+        <a class="button centered-button" href="/products" title="View All Products">View All</a>
+      {% else %}
+        <h1 class="page-title products-page-title">No products found</h1>
+      {% endif %}
+    {% endget %}
+  {% endif %}
+{% endif %}

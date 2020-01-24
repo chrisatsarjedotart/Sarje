@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ page.name }} | {{ store.name }}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <link href="{{ theme | theme_css_url }}" media="screen" rel="stylesheet" type="text/css">
+    {{ head_content }}
+  </head>
+  <body id="{{ page.permalink }}" class="{{ page.category }}">
+    {% if theme.announcement_message_text != blank %}
+      <div class="flash-message">
+        <div class="flash-message-text">{{ theme.announcement_message_text }}</div>
+        <div class="flash-message-close" title="Close announcement message">
+          <svg width="11" height="11" xmlns="http://www.w3.org/2000/svg"><g fill-rule="evenodd"><path d="M10.11 1.596l-8.484 8.485-.707-.707L9.404.89z"/><path d="M1.626.89l8.485 8.484-.707.707L.919 1.596z"/></g></svg>
+        </div>
+      </div>
+    {% endif %}
+    <header class="header">
+      <div class="wrapper">
+        {% if theme.logo != blank %}
+          <a class="store-link" href="/" title="{{ store.name | escape }}">
+            <img alt="{{ store.name | escape }}" class="store-logo" src="{{ theme.images.logo.url | constrain: 1508, 1508 }}">
+          </a>
+        {% else %}
+          <a class="store-link" href="/" title="{{ store.name | escape }}">{{ store.name }}</a>
+        {% endif %}
+
+
+        <nav class="header-nav-container">
+          <ul class="header-nav">
+            <li>
+              {% if categories.active != blank or artists.active != blank or theme.show_search != false %}
+                <button class="open-overlay" title="Shop" tabindex="0" type="button">Shop</button>
+              {% else %}
+                <a href="/products" title="Shop">Shop</a>
+              {% endif %}
+
+              {% if categories.active != blank or artists.active != blank or theme.show_search != false %}
+                <ul class="header-nav-dropdown">
+                  {% if theme.show_search %}
+                    <li class="dropdown-search">
+                      <form class="search-form" name="search" action="/products" method="get" accept-charset="utf8">
+                        <button type="submit" class="search-button"><svg width="12" height="12" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><circle stroke="{{ theme.text_color }}" cx="5" cy="5" r="4.5"/><path fill="{{ theme.text_color }}" d="M8.318 7.732l2.829 2.829-.707.707L7.61 8.44z"/></g></svg></button>
+                        <input type="hidden" name="utf8" value='✓'>
+                        <input class="search-input" id="search" name="search" placeholder="Search..." type="text" autocomplete="off" />
+                      </form>
+                    </li>
+                  {% endif %}
+                  <li><a href="/products" title="All Products">All</a></li>
+                  {% if categories.active != blank %}
+                    {% for category in categories.active %}
+                      <li>{{ category | link_to }}</li>
+                    {% endfor %}
+                  {% endif %}
+                  {% if artists.active != blank %}
+                    {% for artist in artists.active %}
+                      <li>{{ artist | link_to }}</li>
+                    {% endfor %}
+                  {% endif %}
+                </ul>
+                <button class="close-overlay"><svg width="11" height="11" xmlns="http://www.w3.org/2000/svg"><g fill="#325DA8" fill-rule="evenodd"><path d="M10.11 1.596l-8.484 8.485-.707-.707L9.404.89z"/><path d="M1.626.89l8.485 8.484-.707.707L.919 1.596z"/></g></svg></button>
+              {% endif %}
+            </li>
+            {% if pages.all != blank or store.website != blank %}
+              <li>
+                {% if pages.all != blank or store.website != blank %}
+                  <button class="open-overlay" title="Info" tabindex="0" type="button">Info</button>
+                  <ul class="header-nav-dropdown">
+                    {% for page in pages.all %}
+                      <li>{{ page | link_to }}</li>
+                    {% endfor %}
+                    {% if store.website != blank %}
+                      <li><a href="{{ store.website }}">Back to site</a></li>
+                    {% endif %}
+                    <li><a href="/contact" title="Contact">Contact</a></li>
+                  </ul>
+                  <button class="close-overlay"><svg width="11" height="11" xmlns="http://www.w3.org/2000/svg"><g fill="#325DA8" fill-rule="evenodd"><path d="M10.11 1.596l-8.484 8.485-.707-.707L9.404.89z"/><path d="M1.626.89l8.485 8.484-.707.707L.919 1.596z"/></g></svg></button>
+                {% endif %}
+              </li>
+            {% else %}
+              <li><a href="/contact" title="Contact">Contact</a></li>
+            {% endif %}
+
+            {% if theme.twitter_url != blank or theme.facebook_url != blank or theme.instagram_url != blank or theme.tumblr_url != blank or theme.pinterest_url != blank %}
+              {% capture social_urls %}{{ theme.twitter_url }},{{ theme.facebook_url }},{{ theme.instagram_url }},{{ theme.tumblr_url }},{{ theme.pinterest_url }}{% endcapture %}
+
+              {% assign social_urls_array = social_urls | split: ","  %}
+
+              {% assign social_urls_array_size = social_urls_array | size %}
+              {% if social_urls_array_size == 1 %}
+                <li>
+                  {% if theme.instagram_url != blank %}<a target="_blank" title="Instagram" href="{{ theme.instagram_url }}">Instagram</a>{% endif %}
+                  {% if theme.twitter_url != blank %}<a target="_blank" title="Twitter" href="{{ theme.twitter_url }}">Twitter</a>{% endif %}
+                  {% if theme.facebook_url != blank %}<a target="_blank" title="Facebook" href="{{ theme.facebook_url }}">Facebook</a>{% endif %}
+                  {% if theme.pinterest_url != blank %}<a target="_blank" title="Pinterest" href="{{ theme.pinterest_url }}">Pinterest</a>{% endif %}
+                  {% if theme.tumblr_url != blank %}<a target="_blank" title="Tumblr" href="{{ theme.tumblr_url }}">Tumblr</a>{% endif %}
+                </li>
+              {% else %}
+                <li>
+                  <button class="open-overlay" title="Follow" tabindex="0" type="button">Follow</button>
+                  <ul class="header-nav-dropdown">
+                    {% if theme.instagram_url != blank %}
+                      <li><a target="_blank" title="Instagram" href="{{ theme.instagram_url }}">Instagram</a></li>
+                    {% endif %}
+
+                    {% if theme.twitter_url != blank %}
+                      <li><a target="_blank" title="Twitter" href="{{ theme.twitter_url }}">Twitter</a></li>
+                    {% endif %}
+
+                    {% if theme.facebook_url != blank %}
+                      <li><a target="_blank" title="Facebook" href="{{ theme.facebook_url }}">Facebook</a></li>
+                    {% endif %}
+
+                    {% if theme.pinterest_url != blank %}
+                      <li><a target="_blank" title="Pinterest" href="{{ theme.pinterest_url }}">Pinterest</a></li>
+                    {% endif %}
+
+                    {% if theme.tumblr_url != blank %}
+                      <li><a target="_blank" title="Tumblr" href="{{ theme.tumblr_url }}">Tumblr</a></li>
+                    {% endif %}
+                  </ul>
+                  <button class="close-overlay"><svg width="11" height="11" xmlns="http://www.w3.org/2000/svg"><g fill="#325DA8" fill-rule="evenodd"><path d="M10.11 1.596l-8.484 8.485-.707-.707L9.404.89z"/><path d="M1.626.89l8.485 8.484-.707.707L.919 1.596z"/></g></svg></button>
+                </li>
+              {% endif %}
+            {% endif %}
+
+            <li><a href="/cart" title="View Cart">Cart <span class="cart-item-count {% if cart.item_count == 0 %}no-items{% endif %}">{{ cart.item_count }}</span></a></li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+    <main class="content">
+      <div class="wrapper">
+        {% if page.category == 'custom' %}
+          <h1 class="page-title">{{ page.name }}</h1>
+          <div class="page-content {{ page.category }}-content">
+            {{ page_content | paragraphs }}
+
+              {% if page.name == theme.lookbook_page_name %}
+
+                {% if theme.image_sets.lookbook_images.size > 0 %}
+                  <div class="lookbook-gallery">
+                    {% for image in theme.image_sets.lookbook_images %}
+                      <img class="lookbook-gallery-image" src="{{ image.url | constrain: '1400', '' }}">
+                    {% endfor %}
+                  </div>
+                {% endif %}
+
+              {% endif %}
+
+          </div>
+        {% else %}
+          {{ page_content }}
+        {% endif %}
+      </div>
+      {% if page.full_url contains '/product/' %}
+        {% if theme.show_similar_products %}
+          {% if product.categories != blank %}
+            {% for category in product.categories %}
+              {% capture product_divs %}
+                {% for category_product in category.products %}
+                  {% assign product_status = '' %}
+                  {% case category_product.status %}
+                  	{% when 'active' %}
+                  		{% if category_product.on_sale %}{% assign product_status = 'On sale' %}{% endif %}
+                  	{% when 'sold-out' %}
+                  		{% assign product_status = 'Sold out' %}
+                  	{% when 'coming-soon' %}
+                  		{% assign product_status = 'Coming soon' %}
+                  {% endcase %}
+                  {% if product.id != category_product.id %}
+                    <a id="product-{{ category_product.id }}" class="product-list-item similar-product" href="{{ category_product.url }}" title="View {{ category_product.name | escape }}">
+                      <div class="product-list-item-container">
+                        <figure class="product-list-image-container {% if category_product.images[1] != blank and theme.secondary_image_on_hover == true %}show-secondary{% endif %}">
+                          <img alt="Image of {{ category_product.name | escape }}" class="similar-product-list-image product-list-image {% if product.image.height > product.image.width %}image-tall{% elsif product.image.height < product.image.width %}image-wide{% else %}image-square{% endif %}" data-src="{{ category_product.image | product_image_url | constrain: 1000, 1000 }}">
+                          {% if category_product.images[1] != blank and theme.secondary_image_on_hover == true %}
+                            <img alt="Image of {{ category_product.name | escape }}" class="similar-product-list-image product-list-image {% if product.image.height > product.image.width %}image-tall{% elsif product.image.height < product.image.width %}image-wide{% else %}image-square{% endif %} secondary-image" data-src="{{ category_product.images[1] | product_image_url | constrain: 1000, 1000 }}">
+                          {% endif %}
+                        </figure>
+                      </div>
+                      <div class="product-list-item-name">{{ category_product.name }}</div>
+                      <div class="product-list-item-price">{{ category_product.default_price | money: theme.money_format }} {% if product_status != blank %} &mdash; <span class="product-status">{{ product_status }}</span>{% endif %}</div>
+                    </a>
+                  {% endif %}
+                {% endfor %}
+              {% endcapture %}
+            {% endfor %}
+          {% endif %}
+        {% endif %}
+      {% endif %}
+
+      {% if product_divs != blank %}
+        <div class="all-similar-products">{{ product_divs }}</div>
+        <div class="similar-products">
+          <div class="wrapper">
+            <div class="similar-products-header">You might also like</div>
+            <div class="product-list similar-product-list"></div>
+          </div>
+        </div>
+      {% endif %}
+    </main>
+    <footer class="footer">
+      <div class="wrapper">
+        <div class="footer-store-name">{{ store.name }}</div>
+        <div class="footer-store-credit">{{ bigcartel_credit }}</div>
+      </div>
+    </footer>
+    {% if errors != blank %}
+      <div class="error-modal">
+        <div class="error-background"></div>
+        <div class="error-container">
+          <div class="error-list">
+            {% for error in errors %}
+              <div class="error-list-item">{{ error }}</div>
+            {% endfor %}
+          </div>
+          <div class="close-errors"><svg width="11" height="11" xmlns="http://www.w3.org/2000/svg"><g fill-rule="evenodd"><path d="M10.11 1.596l-8.484 8.485-.707-.707L9.404.89z"/><path d="M1.626.89l8.485 8.484-.707.707L.919 1.596z"/></g></svg></div>
+        </div>
+      </div>
+
+    {% else %}
+      <div class="error-modal" style="display: none;">
+        <div class="error-background"></div>
+        <div class="error-container">
+          <div class="error-list"></div>
+          <div class="close-errors"><svg width="11" height="11" xmlns="http://www.w3.org/2000/svg"><g fill-rule="evenodd"><path d="M10.11 1.596l-8.484 8.485-.707-.707L9.404.89z"/><path d="M1.626.89l8.485 8.484-.707.707L.919 1.596z"/></g></svg></div>
+        </div>
+      </div>
+    {% endif %}
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="{{ 'api' | theme_js_url }}"></script>
+    <script src="{{ theme | theme_js_url }}"></script>
+  </body>
+  <script src="https://chimpstatic.com/mcjs-connected/js/users/6922c026aaa73859757eb7410/97115bee8782ec45f4d3e031e.js"></script>
+</html>

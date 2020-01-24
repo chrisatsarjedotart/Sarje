@@ -1,0 +1,39 @@
+{% if cart.items == blank %}
+  <div class="empty-cart-message">
+    <h1 class="page-title empty-cart-text">Your cart is empty</h1>
+  </div>
+
+  <a class="button centered-button start-shopping-button" href="/products" title="Start Shopping">Start Shopping</a>
+{% endif %}
+
+{% if cart.items != blank %}
+  <form method="post" action="/cart" id="cart-form" class="cart-form">
+    <ul class="cart-items">
+      {% for item in cart.items %}
+        <li class="cart-item" data-item-id="{{ item.id }}">
+          <div class="cart-item-remove" title="Remove item"><svg class="cart-remove-icon" width="25" height="25" viewBox="0 0 25 25"><path d="M12.5 25C5.61 25 0 19.39 0 12.5S5.61 0 12.5 0 25 5.61 25 12.5 19.39 25 12.5 25zm0-24C6.16 1 1 6.16 1 12.5S6.16 24 12.5 24 24 18.84 24 12.5 18.84 1 12.5 1zm4.15 16.35L12.5 13.2l-4.15 4.15-.71-.71 4.15-4.15-4.15-4.15.71-.71 4.15 4.15 4.15-4.15.71.71-4.15 4.15 4.15 4.15-.71.71z" fill-rule="nonzero" /></svg></div>
+          <a class="cart-item-image" href="{{ item.product.url }}" title="View {{ item.product.name | escape }}" style="background-image:url('{{ item.product.image | product_image_url | constrain: 576, 576 }}');"></a>
+          <div class="cart-item-details">
+            <div class="cart-item-details-name">{{ item.product.name }}</div>
+            {% unless item.product.has_default_option %}
+              <div class="cart-item-details-option">{{ item.option.name }}</div>
+            {% endunless %}
+          </div>
+          <div class="cart-item-quantity-holder" data-item-id="{{ item.id }}">
+            {{ item | item_quantity_input, 'option-quantity', 'option-quantity' }}
+          </div>
+          <div class="cart-item-details-price">{{ item.unit_price | money: theme.money_format }}</div>
+
+        </li>
+      {% endfor %}
+    </ul>
+    <div class="cart-footer">
+      <div class="cart-subtotal">
+        <span class="cart-subtotal-label">Subtotal</span>
+        <span class="cart-subtotal-amount">{{ cart.total | money: theme.money_format }}</span>
+      </div>
+      <button type="submit" name="checkout" title="Checkout" class="button checkout-btn">Checkout</button>
+      <a class="button continue-shopping" href="/products">Continue Shopping</a>
+    </div>
+  </form>
+{% endif %}

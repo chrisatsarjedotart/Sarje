@@ -1,0 +1,51 @@
+{% paginate products from products.current by theme.products_per_page %}
+  {% if products != blank %}
+    <h1 class="page-title products-page-title">{% if page.full_url contains "search=" %}Search results - {{ paginate.items }}{% else %}{{ page.name }}{% endif %}</h1>
+    <div class="product-list">
+      {% for product in products %}
+        {% assign product_status = '' %}
+        {% case product.status %}
+        	{% when 'active' %}
+        		{% if product.on_sale %}{% assign product_status = 'On sale' %}{% endif %}
+        	{% when 'sold-out' %}
+        		{% assign product_status = 'Sold out' %}
+        	{% when 'coming-soon' %}
+        		{% assign product_status = 'Coming soon' %}
+        {% endcase %}
+        <a class="product-list-item" href="{{ product.url }}" title="View {{ product.name | escape }}">
+          <div class="product-list-item-container">
+            <figure class="product-list-image-container {% if product.images[1] != blank and theme.secondary_image_on_hover == true %}show-secondary{% endif %}">
+              <img alt="Image of {{ product.name | escape }}" class="product-list-image {% if product.image.height > product.image.width %}image-tall{% elsif product.image.height < product.image.width %}image-wide{% else %}image-square{% endif %}" src="{{ product.image | product_image_url | constrain: 1000, 1000 }}">
+              {% if product.images[1] != blank and theme.secondary_image_on_hover == true %}
+              <img alt="Image of {{ product.name | escape }}" class="product-list-image {% if product.image.height > product.image.width %}image-tall{% elsif product.image.height < product.image.width %}image-wide{% else %}image-square{% endif %} secondary-image" src="{{ product.images[1] | product_image_url | constrain: 1000, 1000 }}">
+              {% endif %}
+            </figure>
+          </div>
+          <div class="product-list-item-name">{{ product.name }}</div>
+          <div class="product-list-item-price">{{ product.default_price | money: theme.money_format }}{% if product_status != blank %} &mdash; <span class="product-status">{{ product_status }}</span>{% endif %}</div>
+        </a>
+      {% endfor %}
+    </div>
+    {% if paginate.pages > 1 %}
+      <div class="pagination">
+        {% if paginate.previous.is_link %}
+          <a class="pagination-link prev-link" href="{{ paginate.previous.url }}" title="Previous Page">
+            <svg class="pagination-arrow prev-arrow" width="9" height="10" xmlns="http://www.w3.org/2000/svg"><path d="M9 5.787l-.73-.694-3.248 3.04V0H3.978v8.133L.731 5.093 0 5.787 4.5 10z" fill-rule="nonzero"/></svg>
+          </a>
+        {% endif %}
+        <span class="pagination-caption">Page {{ paginate.current_page }} of {{ paginate.pages }}</span>
+        {% if paginate.next.is_link %}
+          <a class="pagination-link next-link" href="{{ paginate.next.url }}" title="Next Page">
+            <svg class="pagination-arrow next-arrow" width="9" height="10" xmlns="http://www.w3.org/2000/svg"><path d="M9 5.787l-.73-.694-3.248 3.04V0H3.978v8.133L.731 5.093 0 5.787 4.5 10z" fill-rule="nonzero"/></svg>
+          </a>{% endif %}
+        {% endif %}
+      </div>
+  {% else %}
+    {% if page.full_url contains "search=" %}
+      <h1 class="page-title products-page-title">No products matched your search.</h1>
+      <a class="button centered-button" href="/products">View All</a>
+    {% else %}
+      <h1 class="page-title products-page-title">{{ page.name }}</h1>
+    {% endif %}
+  {% endif %}
+{% endpaginate %}

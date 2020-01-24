@@ -1,0 +1,66 @@
+<div class="product-page-content">
+  {% assign product_status = '' %}
+  {% case product.status %}
+  	{% when 'active' %}
+  		{% if product.on_sale %}{% assign product_status = 'On sale' %}{% endif %}
+  	{% when 'sold-out' %}
+  		{% assign product_status = 'Sold out' %}
+  	{% when 'coming-soon' %}
+  		{% assign product_status = 'Coming soon' %}
+  {% endcase %}
+
+  <div class="primary-product-image-container">
+    <img alt="Image of {{ product.name | escape }}" class="primary-product-image" src="{{ product.image | product_image_url | constrain: 1500 }}">
+  </div>
+
+  <div class="product-page-details">
+    {% if product.status == 'active' %}
+      <form action="/cart" class="product-form" method="post">
+        {{ product | product_quantity_input, 1, 'product-quantity', 'product-quantity' }}
+
+        {% if product.has_default_option %}
+          {{ product.option | hidden_option_input }}
+          <button class="button add-to-cart-button" type="submit" data-adding-text="Adding..." data-added-text="Added!">Add to Cart</button>
+        {% else %}
+          {{ product.options_in_stock | options_select }}
+
+          <div class="product-option-selection" data-adding-text="Adding..." data-added-text="Added!">
+            <button class="product-option-selection-button" type="button" tabindex="0">
+              Select Option <svg class="down-arrow" width="11" height="13" viewBox="0 0 11 13"><path d="M9.65 7.65l.71.71-4.5 4.5c-.1.1-.23.15-.35.15-.12 0-.26-.05-.35-.15l-4.5-4.5.71-.71 3.65 3.65V0h1v11.29l3.63-3.64z" fill-rule="nonzero" /></svg>
+            </button>
+            <ul class="product-option-list">
+              {% for option in product.options_in_stock	 %}
+                <li role="button" tabindex="0" class="dropdown-link" data-option-id="{{ option.id }}" {% if option.sold_out %} class="disabled"{% endif %}>
+                  <span class="product-option"><span class="option-name">{{ option.name }}</span>{% if option.price != product.default_price %} - <span class="option-price">{{ option.price | money: theme.money_format }}</span>{% endif %} {% if option.sold_out %}<span class="option-status">(Sold out)</span>{% endif %}</span>
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+      </form>
+    {% endif %}
+    <div class="product-page-titles">
+      <h1 class="page-title product-name">{{ product.name }}</h1>
+      <div class="product-page-price">
+        {{ product.default_price | money: theme.money_format }}
+        {% if product_status != blank %}
+          &mdash; <span class="product-status">{{ product_status }}</span>
+        {% endif %}
+      </div>
+    </div>
+
+  	<div class="product-description">
+  		{% if product.description != blank %}
+  			{{ product.description | paragraphs }}
+  		{% endif %}
+  	</div>
+  </div>
+
+  {% if product.images.size > 1 %}
+    <div class="secondary-product-image-container">
+      {% for image in product.images offset: 1 %}
+        <img alt="Image of {{ product.name | escape }}" class="secondary-product-image" src="{{ image | product_image_url | constrain: 1500 }}">
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
